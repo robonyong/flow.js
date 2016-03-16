@@ -155,8 +155,8 @@
     /**
      * Set a callback for an event, possible events:
      * fileSuccess(file), fileProgress(file), fileAdded(file, event),
-     * fileRemoved(file), fileRetry(file), fileError(file, message), 
-     * complete(), progress(), error(message, file), pause()
+     * fileRetry(file), fileError(file, message), complete(),
+     * progress(), error(message, file), pause()
      * @function
      * @param {string} event
      * @param {Function} callback
@@ -278,10 +278,10 @@
      * @param {FlowFile} file
      * @returns {string}
      */
-    generateUniqueIdentifier: function (file) {
+    generateUniqueIdentifier: function (file, event) {
       var custom = this.opts.generateUniqueIdentifier;
       if (typeof custom === 'function') {
-        return custom(file);
+        return custom(file, event);
       }
       // Some confusion in different versions of Firefox
       var relativePath = file.relativePath || file.webkitRelativePath || file.fileName || file.name;
@@ -408,10 +408,10 @@
         // When new files are added, simply append them to the overall list
         var $ = this;
         input.addEventListener('change', function (e) {
-       	  if (e.target.value) {
+          if (e.target.value) {
             $.addFiles(e.target.files, e);
             e.target.value = '';
-       	  }
+          }
         }, false);
       }, this);
     },
@@ -580,8 +580,8 @@
       each(fileList, function (file) {
         // https://github.com/flowjs/flow.js/issues/55
         if ((!ie10plus || ie10plus && file.size > 0) && !(file.size % 4096 === 0 && (file.name === '.' || file.fileName === '.')) &&
-          (this.opts.allowDuplicateUploads || !this.getFromUniqueIdentifier(this.generateUniqueIdentifier(file)))) {
-          var f = new FlowFile(this, file);
+          (this.opts.allowDuplicateUploads || !this.getFromUniqueIdentifier(this.generateUniqueIdentifier(file, event)))) {
+          var f = new FlowFile(this, file, event);
           if (this.fire('fileAdded', f, event)) {
             files.push(f);
           }
@@ -609,7 +609,6 @@
         if (this.files[i] === file) {
           this.files.splice(i, 1);
           file.abort();
-          this.fire('fileRemoved', file);
         }
       }
     },
@@ -693,7 +692,7 @@
    * @param {File} file
    * @constructor
    */
-  function FlowFile(flowObj, file) {
+  function FlowFile(flowObj, file, event) {
 
     /**
      * Reference to parent Flow instance
@@ -735,7 +734,7 @@
      * File unique identifier
      * @type {string}
      */
-    this.uniqueIdentifier = flowObj.generateUniqueIdentifier(file);
+    this.uniqueIdentifier = flowObj.generateUniqueIdentifier(file, event);
 
     /**
      * List of chunks
@@ -826,7 +825,7 @@
             break;
           }
           this.measureSpeed();
-          this.flowObj.fire('fileProgress', this, chunk);
+          this.flowObj.fire('fileProgress', this, chunk, message);
           this.flowObj.fire('progress');
           this._lastProgressCallback = Date.now();
           break;
@@ -1047,7 +1046,7 @@
   /**
    * Default read function using the webAPI
    *
-   * @function webAPIFileRead(fileObj, startByte, endByte, fileType, chunk)
+   * @function webAPIFileRead(fileObj, fileType, startByte, endByte, chunk)
    *
    */
   function webAPIFileRead(fileObj, startByte, endByte, fileType, chunk) {
@@ -1396,7 +1395,7 @@
       } else {
         if (this.flowObj.opts.successStatuses.indexOf(this.xhr.status) > -1) {
           // HTTP 200, perfect
-		      // HTTP 202 Accepted - The request has been accepted for processing, but the processing has not been completed.
+          // HTTP 202 Accepted - The request has been accepted for processing, but the processing has not been completed.
           return 'success';
         } else if (this.flowObj.opts.permanentErrors.indexOf(this.xhr.status) > -1 ||
             !isTest && this.retries >= this.flowObj.opts.maxChunkRetries) {
