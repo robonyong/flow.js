@@ -1,8 +1,8 @@
 {
-  "name": "@flowjs/flow.js",
+  "name": "vida-flowjs",
   "version": "2.10.1",
-  "description": "Flow.js library implements html5 file upload and provides multiple simultaneous, stable, fault tolerant and resumable uploads.",
-  "main": "src/flow.js",
+  "description": "A fork of the Flow.js library implements html5 file upload and provides multiple simultaneous, stable, fault tolerant and resumable uploads. Adds events for VIDA's custom generateUniqueIdentifier.",
+  "main": "dist/flow.js",
   "scripts": {
     "test": "grunt test"
   },
@@ -22,6 +22,9 @@
     "upload"
   ],
   "author": "Aidas Klimas",
+  "contributors":[
+    "Robin Yang <robin@shopvida.com>"
+  ],
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
