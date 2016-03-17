@@ -1,6 +1,6 @@
 {
   "name": "vida-flowjs",
-  "version": "2.10.1.1",
+  "version": "2.10.1",
   "description": "A fork of the Flow.js library implements html5 file upload and provides multiple simultaneous, stable, fault tolerant and resumable uploads. Adds events for VIDA's custom generateUniqueIdentifier.",
   "main": "dist/flow.js",
   "scripts": {
