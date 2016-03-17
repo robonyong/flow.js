@@ -1,6 +1,7 @@
 {
   "name": "vida-flowjs",
   "version": "2.11.2",
+  "vida-flowjs": "https://github.com/robonyong/flow.js/tarball/master",
   "description": "A fork of the Flow.js library implements html5 file upload and provides multiple simultaneous, stable, fault tolerant and resumable uploads. Adds events for VIDA's custom generateUniqueIdentifier.",
   "main": "dist/flow.js",
   "scripts": {
