@@ -299,6 +299,7 @@
       // and last chunk of a file quickly; this let's the server check the file's
       // metadata and determine if there's even a point in continuing.
       var found = false;
+      var _this = this;
       if (this.opts.prioritizeFirstAndLastChunk) {
         each(this.files, function (file) {
           if (!file.paused && file.chunks.length &&
@@ -332,6 +333,9 @@
         }
         if (found) {
           return false;
+        }
+        if(file.isComplete()){
+          _this.fire('fileComplete', file)
         }
       });
       if (found) {
