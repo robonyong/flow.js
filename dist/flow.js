@@ -155,8 +155,8 @@
     /**
      * Set a callback for an event, possible events:
      * fileSuccess(file), fileProgress(file), fileAdded(file, event),
-     * fileRetry(file), fileError(file, message), complete(),
-     * progress(), error(message, file), pause()
+     * fileRemoved(file), fileRetry(file), fileError(file, message), 
+     * complete(), progress(), error(message, file), pause()
      * @function
      * @param {string} event
      * @param {Function} callback
@@ -333,9 +333,11 @@
         }
         if (found) {
           return false;
-        }
-        if(file.isComplete()){
-          _this.fire('fileComplete', file)
+        } else if(file.isComplete()){
+          async(function () {
+            _this.fire('fileComplete', file);
+            _this.removeFile(file);
+          }, _this);
         }
       });
       if (found) {
@@ -613,6 +615,7 @@
         if (this.files[i] === file) {
           this.files.splice(i, 1);
           file.abort();
+          this.fire('fileRemoved', file);
         }
       }
     },
@@ -1603,7 +1606,7 @@
    * Library version
    * @type {string}
    */
-  Flow.version = 'https://github.com/robonyong/flow.js/archive/master.zip';
+  Flow.version = '2.10.2';
 
   if ( typeof module === "object" && module && typeof module.exports === "object" ) {
     // Expose Flow as module.exports in loaders that implement the Node
