@@ -91,7 +91,7 @@
       generateUniqueIdentifier: null,
       maxChunkRetries: 0,
       chunkRetryInterval: null,
-      permanentErrors: [404, 415, 500, 501],
+      permanentErrors: [404, 413, 415, 500, 501],
       successStatuses: [200, 201, 202],
       onDropStopPropagation: false,
       initFileFn: null,
@@ -374,7 +374,7 @@
      * be selected (Chrome only).
      */
     assignBrowse: function (domNodes, isDirectory, singleFile, attributes) {
-      if (typeof domNodes.length === 'undefined') {
+      if (domNodes instanceof Element) {
         domNodes = [domNodes];
       }
 
@@ -600,8 +600,8 @@
           }
           this.files.push(file);
         }, this);
+        this.fire('filesSubmitted', files, event);
       }
-      this.fire('filesSubmitted', files, event);
     },
 
 
@@ -1343,7 +1343,7 @@
       switch (this.readState) {
         case 0:
           this.readState = 1;
-          read(this.fileObj, this.startByte, this.endByte, this.fileType, this);
+          read(this.fileObj, this.startByte, this.endByte, this.fileObj.file.type, this);
           return;
         case 1:
           return;
@@ -1406,7 +1406,7 @@
           return 'success';
         } else if (this.flowObj.opts.permanentErrors.indexOf(this.xhr.status) > -1 ||
             !isTest && this.retries >= this.flowObj.opts.maxChunkRetries) {
-          // HTTP 415/500/501, permanent error
+          // HTTP 413/415/500/501, permanent error
           return 'error';
         } else {
           // this should never happen, but we'll reset and queue a retry
