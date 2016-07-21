@@ -333,9 +333,11 @@
         }
         if (found) {
           return false;
-        }
-        if(file.isComplete()){
-          _this.fire('fileComplete', file)
+        } else if(file.isComplete()){
+          async(function () {
+            _this.fire('fileComplete', file);
+            _this.removeFile(file);
+          }, _this);
         }
       });
       if (found) {
